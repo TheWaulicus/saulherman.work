@@ -5,9 +5,9 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "resume",
+	"main": "src/index.ts",
 	"compatibility_date": "2026-03-10",
 	"assets": {
-		// The path to the directory containing the `index.html` file to be served at `/`
 		"directory": "./public"
 	},
 	"observability": {
