@@ -1,26 +1,5 @@
 ---
-const toolkit = [
-  {
-    category: "Platforms",
-    items: ["Jamf Pro", "Okta", "Omnissa", "Intune", "Google Workspace", "AWS"],
-    size: "large"
-  },
-  {
-    category: "Automation",
-    items: ["Python", "Bash", "PowerShell", "Swift", "API Integration"],
-    size: "medium"
-  },
-  {
-    category: "Security & Compliance",
-    items: ["CIS Benchmarks", "SOC2", "NIST", "Endpoint Security"],
-    size: "small"
-  },
-  {
-    category: "Domains",
-    items: ["Endpoint Management", "Zero Trust", "Infrastructure as Code", "Fleet Scale"],
-    size: "medium"
-  }
-];
+import toolkit from '../data/toolkit.json';
 ---
 
 <section class="toolkit">
@@ -29,9 +8,9 @@ const toolkit = [
     {toolkit.map(group => (
       <div class={`bento-item ${group.size} glass`}>
         <h3>{group.category}</h3>
-        <div class="skill-list">
+        <div class="skill-list" role="list">
           {group.items.map(item => (
-            <span class="skill-tag">{item}</span>
+            <span class="skill-tag" role="listitem">{item}</span>
           ))}
         </div>
       </div>
@@ -88,12 +67,12 @@ const toolkit = [
     border: 1px solid var(--tag-border);
     border-radius: 6px;
     transition: all 0.2s ease;
+    cursor: default;
   }
 
   .skill-tag:hover {
     border-color: var(--accent);
     color: var(--accent);
-    transform: translateY(-2px);
   }
 
   /* Bento Layout Spans */

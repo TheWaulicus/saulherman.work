@@ -8,6 +8,10 @@ const experience = await Promise.all(experienceEntries.map(async (entry) => {
   const { Content } = await render(entry);
   return { entry, Content };
 }));
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
 ---
 
 <section class="experience">
@@ -18,7 +22,15 @@ const experience = await Promise.all(experienceEntries.map(async (entry) => {
         <div class="timeline-marker"></div>
         <div class="timeline-content">
           <div class="meta">
-            <span class="period">{entry.data.period}</span>
+            <span class="period">
+              <time datetime={entry.data.startDate.toISOString()}>{formatDate(entry.data.startDate)}</time>
+              {' – '}
+              {entry.data.endDate ? (
+                <time datetime={entry.data.endDate.toISOString()}>{formatDate(entry.data.endDate)}</time>
+              ) : (
+                'Present'
+              )}
+            </span>
             <span class="location">{entry.data.location}</span>
           </div>
           <div class="card glass">
@@ -30,9 +42,9 @@ const experience = await Promise.all(experienceEntries.map(async (entry) => {
               <Content />
             </div>
             {entry.data.tags && (
-              <div class="tags">
+              <div class="tags" role="list">
                 {entry.data.tags.map(tag => (
-                  <span class="tag">{tag}</span>
+                  <span class="tag" role="listitem">{tag}</span>
                 ))}
               </div>
             )}
