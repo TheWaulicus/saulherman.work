@@ -1,34 +1,28 @@
-# Cloudflare Workers
+# Portfolio Redesign (Astro + Cloudflare)
 
-STOP. Your knowledge of Cloudflare Workers APIs and limits may be outdated. Always retrieve current documentation before any Workers, KV, R2, D1, Durable Objects, Queues, Vectorize, AI, or Agents SDK task.
+STOP. This project uses Astro 6 and Cloudflare Workers. Always check `src/content.config.ts` for content schemas and `wrangler.jsonc` for deployment config.
 
-## Docs
+## Architecture
 
-- https://developers.cloudflare.com/workers/
-- MCP: `https://docs.mcp.cloudflare.com/mcp`
-
-For all limits and quotas, retrieve from the product's `/platform/limits/` page. eg. `/workers/platform/limits`
+- **Astro 6**: SSG mode.
+- **Content Collections**: Located in `src/content/`. Use `getCollection` to fetch data.
+- **React**: Used for interactive components (client-side hydration).
+- **Cloudflare Workers**: Serves static assets from `dist/`.
 
 ## Commands
 
 | Command | Purpose |
 |---------|---------|
-| `npx wrangler dev` | Local development |
-| `npx wrangler deploy` | Deploy to Cloudflare |
-| `npx wrangler types` | Generate TypeScript types |
+| `npm run dev` | Local development with Astro |
+| `npm run build` | Build for production (outputs to `dist/`) |
+| `npm run preview` | Preview the production build |
+| `npx wrangler deploy` | Deploy `dist/` to Cloudflare |
 
-Run `wrangler types` after changing bindings in wrangler.jsonc.
+## Content Management
 
-## Node.js Compatibility
+Experience and Projects are managed via MDX files in `src/content/`. 
+Updating content requires updating the MDX files and potentially the schemas in `src/content.config.ts`.
 
-https://developers.cloudflare.com/workers/runtime-apis/nodejs/
+## Deployment
 
-## Errors
-
-- **Error 1102** (CPU/Memory exceeded): Retrieve limits from `/workers/platform/limits/`
-- **All errors**: https://developers.cloudflare.com/workers/observability/errors/
-
-## Product Docs
-
-Retrieve API references and limits from:
-`/kv/` · `/r2/` · `/d1/` · `/durable-objects/` · `/queues/` · `/vectorize/` · `/workers-ai/` · `/agents/`
+Configuration is in `wrangler.jsonc`. Static assets are served via the `assets` binding.
