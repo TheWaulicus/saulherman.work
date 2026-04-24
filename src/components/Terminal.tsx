@@ -52,7 +52,8 @@ const Terminal: React.FC = () => {
         setHistory([]);
         return;
       default:
-        setHistory(prev => [...prev, { type: 'err', content: `Command not found: ${cleanCmd}. Type 'help' for a list of available commands.` }]);
+        // Use a safe text-only output for unknown commands
+        setHistory(prev => [...prev, { type: 'err', content: cleanCmd }]);
         return;
     }
 
@@ -61,10 +62,11 @@ const Terminal: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
+    const currentInput = input.trim();
+    if (!currentInput) return;
 
-    setHistory(prev => [...prev, { type: 'cmd', content: input }]);
-    handleCommand(input);
+    setHistory(prev => [...prev, { type: 'cmd', content: currentInput }]);
+    handleCommand(currentInput);
     setInput('');
   };
 
@@ -115,9 +117,13 @@ const Terminal: React.FC = () => {
                 <span style={{ color: 'var(--muted)' }}>$</span>
                 <span style={{ color: 'var(--accent)' }}>{item.content}</span>
               </div>
+            ) : item.type === 'err' ? (
+              <div style={{ color: '#ff5f57' }}>
+                Command not found: {item.content}. Type 'help' for a list of available commands.
+              </div>
             ) : (
               <div 
-                style={{ color: item.type === 'err' ? '#ff5f57' : 'var(--sub)' }}
+                style={{ color: 'var(--sub)' }}
                 dangerouslySetInnerHTML={{ __html: item.content }}
               />
             )}
