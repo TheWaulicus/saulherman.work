@@ -1,12 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import Terminal from '../components/Terminal';
 import ExperienceTimeline from '../components/ExperienceTimeline.astro';
 import BentoToolkit from '../components/BentoToolkit.astro';
 ---
 
 <BaseLayout title="Saul Herman | Product Engineer">
   <Hero />
+  <Terminal client:load />
   <ExperienceTimeline />
   <BentoToolkit />
 </BaseLayout>
