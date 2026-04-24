@@ -1,0 +1,73 @@
+---
+import FeatureCard from './FeatureCard.astro';
+---
+
+<header class="hero">
+  <div class="intro">
+    <h1>Saul Herman</h1>
+    <p class="tagline">Senior Client Platform Engineer & Founder</p>
+    <p class="bio">
+      Building tools for creators and managing infrastructure for the world's most innovative teams.
+    </p>
+  </div>
+
+  <div class="featured-grid">
+    <FeatureCard 
+      title="Extraction Lab"
+      description="Professional coffee intelligence platform using local AI."
+      tags={["Gemma 4", "SwiftUI", "Live Activities"]}
+      type="product"
+    />
+    <FeatureCard 
+      title="Fleet Engineering"
+      description="Managing 32,000+ endpoints with 75%+ CIS L2 compliance."
+      tags={["Jamf Pro", "Python", "Security", "Scale"]}
+      type="scale"
+    />
+  </div>
+</header>
+
+<style>
+  .hero {
+    padding: 4rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  .intro h1 {
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .tagline {
+    font-size: 1.25rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+
+  .bio {
+    font-size: 1.1rem;
+    color: var(--sub);
+    max-width: 600px;
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .featured-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .intro h1 {
+      font-size: 2.5rem;
+    }
+  }
+</style>

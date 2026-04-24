@@ -1,0 +1,79 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  tags: string[];
+  type: 'product' | 'scale';
+  href?: string;
+}
+
+const { title, description, tags, type, href = "#" } = Astro.props;
+---
+
+<a href={href} class="feature-card glass">
+  <div class="card-content">
+    <div class="card-header">
+      <span class="type-badge">{type === 'product' ? 'Product' : 'Scale'}</span>
+      <h3>{title}</h3>
+    </div>
+    <p>{description}</p>
+    <div class="tags">
+      {tags.map(tag => <span class="tag">{tag}</span>)}
+    </div>
+  </div>
+</a>
+
+<style>
+  .feature-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    padding: 1.5rem;
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.3s ease;
+    height: 100%;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+  }
+
+  .type-badge {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+    display: block;
+    font-weight: 600;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+
+  p {
+    color: var(--sub);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: auto;
+  }
+
+  .tag {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.6rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    color: var(--sub);
+  }
+</style>
