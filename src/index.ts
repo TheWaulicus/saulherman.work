@@ -1,3 +1,5 @@
+import { ExecutionContext } from "@cloudflare/workers-types";
+
 export interface Env {}
 
 const HEADERS = {
@@ -35,7 +37,10 @@ export default {
 				switch (cmd) {
 					case "whoami":
 						output =
-							"Saul Herman<br>Senior Client Platform Engineer at Atlassian.<br>Specializing in macOS/Windows fleet management and Zero Trust security.";
+							"Saul Herman<br>Senior Client Platform Engineer (Ex-Atlassian).<br>Specializing in macOS/Windows fleet management and Zero Trust security.";
+						break;
+					case "projects":
+						output = "<b>Extraction Lab:</b> Professional coffee intelligence platform.<br><b>Tech:</b> Gemma 4 AI, Swift/SwiftUI, Live Activities, Dynamic Island.<br>URL: <a href='https://extractionlab.app' target='_blank' style='color:var(--accent)'>extractionlab.app</a>";
 						break;
 					case "skills":
 						output = "<b>Platforms:</b> Jamf, Omnissa, Okta, Atlassian, Google Workspace<br><b>Languages:</b> Python, Bash, PowerShell, C++<br><b>Domains:</b> MDM, ZeroTrust, CIS Controls, SOC2, Onboarding Automation";
@@ -44,7 +49,7 @@ export default {
 						output = "Email: saulmherman@icloud.com<br>LinkedIn: linkedin.com/in/bettercallsaui<br>GitHub: github.com/thewaulicus";
 						break;
 					case "help":
-						output = "Available commands:<br> - whoami: Brief bio<br> - skills: Technical skillset<br> - contact: Get in touch<br> - clear: Clear the terminal window<br> - help: Show this message";
+						output = "Available commands:<br> - whoami: Brief bio<br> - projects: Recent work<br> - skills: Technical skillset<br> - contact: Get in touch<br> - clear: Clear the terminal window<br> - help: Show this message";
 						break;
 					default:
 						output = `Command not found: ${cmd}. Type 'help' for a list of available commands.`;
