@@ -10,7 +10,7 @@ interface Props {
 const { title, description, tags, type, href = "#" } = Astro.props;
 ---
 
-<a href={href} class="feature-card glass">
+<a href={href} class="feature-card glass" aria-label={`View ${title}`}>
   <div class="card-content">
     <div class="card-header">
       <span class="type-badge">{type === 'product' ? 'Product' : 'Scale'}</span>
@@ -71,8 +71,8 @@ const { title, description, tags, type, href = "#" } = Astro.props;
   .tag {
     font-size: 0.7rem;
     padding: 0.25rem 0.6rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
     border-radius: 4px;
     color: var(--sub);
   }

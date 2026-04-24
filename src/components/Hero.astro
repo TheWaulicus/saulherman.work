@@ -36,7 +36,7 @@ import FeatureCard from './FeatureCard.astro';
   }
 
   .intro h1 {
-    font-size: 3.5rem;
+    font-size: var(--title-size);
     margin-bottom: 0.5rem;
     color: var(--text);
   }
@@ -57,17 +57,13 @@ import FeatureCard from './FeatureCard.astro';
 
   .featured-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
     gap: 1.5rem;
   }
 
   @media (max-width: 768px) {
-    .featured-grid {
-      grid-template-columns: 1fr;
-    }
-    
-    .intro h1 {
-      font-size: 2.5rem;
+    .hero {
+      padding: 2rem 0;
     }
   }
 </style>
