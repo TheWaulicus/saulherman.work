@@ -1,14 +1,44 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
-import Terminal from '../components/Terminal';
 import ExperienceTimeline from '../components/ExperienceTimeline.astro';
 import BentoToolkit from '../components/BentoToolkit.astro';
+import FeatureCard from '../components/FeatureCard.astro';
+import { getEntry } from 'astro:content';
+
+const extractionLab = await getEntry('projects', 'extraction-lab');
 ---
 
 <BaseLayout title="Saul Herman | Product Engineer">
   <Hero />
-  <Terminal client:load />
+  
   <ExperienceTimeline />
+
+  {extractionLab && (
+    <section class="featured-project">
+      <h2>Featured Project</h2>
+      <FeatureCard
+        title={extractionLab.data.title}
+        description={extractionLab.data.description}
+        tags={extractionLab.data.tags}
+        type="product"
+        href={extractionLab.data.url}
+      />
+    </section>
+  )}
+
   <BentoToolkit />
 </BaseLayout>
+
+<style>
+  .featured-project {
+    margin: 4rem 0;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--accent);
+    font-family: var(--font-serif);
+  }
+</style>

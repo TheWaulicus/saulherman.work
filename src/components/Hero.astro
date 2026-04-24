@@ -1,8 +1,4 @@
 ---
-import FeatureCard from './FeatureCard.astro';
-import { getEntry } from 'astro:content';
-
-const extractionLab = await getEntry('projects', 'extraction-lab');
 ---
 
 <header class="hero">
@@ -15,21 +11,13 @@ const extractionLab = await getEntry('projects', 'extraction-lab');
     </p>
   </div>
 
-  <div class="featured-grid">
-    <FeatureCard
-      title={extractionLab?.data.title || "Extraction Lab"}
-      description={extractionLab?.data.description || "Professional coffee intelligence platform."}
-      tags={extractionLab?.data.tags || ["AI", "SwiftUI", "Apple Ecosystem"]}
-      type="product"
-      href={extractionLab?.data.url || "https://extractionlab.app"}
-    />
-    <FeatureCard
-      title="Fleet Engineering"
-      description="Managing 32,000+ endpoints with 75%+ CIS L2 compliance across the globe."
-      tags={["Jamf Pro", "Python", "Security", "Scale"]}
-      type="scale"
-      href="#experience"
-    />
+  <div class="hero-links">
+    <a href="/saul_herman_resume.pdf" class="btn secondary" download>Resume PDF</a>
+    <a href="mailto:saulmherman@icloud.com" class="btn primary">Get in touch</a>
+    <div class="social-links">
+      <a href="https://github.com/thewaulicus" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://linkedin.com/in/bettercallsaui" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    </div>
   </div>
 </header>
 
@@ -37,8 +25,8 @@ const extractionLab = await getEntry('projects', 'extraction-lab');
   .hero {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
-    padding: 4rem 0;
+    gap: 2.5rem;
+    padding: 6rem 0 4rem;
   }
 
   .intro h1 {
@@ -63,19 +51,67 @@ const extractionLab = await getEntry('projects', 'extraction-lab');
     line-height: 1.6;
   }
 
-  .featured-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+  .hero-links {
+    display: flex;
+    align-items: center;
     gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .primary {
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  .primary:hover {
+    background: #f0e0b0;
+    transform: translateY(-2px);
+  }
+
+  .secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--glass-border);
+  }
+
+  .secondary:hover {
+    background: var(--glass);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .social-links {
+    display: flex;
+    gap: 1.25rem;
+    margin-left: 0.5rem;
+  }
+
+  .social-links a {
+    color: var(--sub);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+  }
+
+  .social-links a:hover {
+    color: var(--accent);
   }
 
   @media (max-width: 768px) {
-    .featured-grid {
-      grid-template-columns: 1fr;
-    }
-    
     .hero {
-      padding: 2rem 0;
+      padding: 4rem 0 2rem;
+    }
+    .hero-links {
+      gap: 1rem;
     }
   }
 </style>
