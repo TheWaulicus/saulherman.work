@@ -1,0 +1,152 @@
+---
+import { getCollection, render } from 'astro:content';
+
+const experienceEntries = await getCollection('experience');
+experienceEntries.sort((a, b) => b.data.startDate.getTime() - a.data.startDate.getTime());
+
+const experience = await Promise.all(experienceEntries.map(async (entry) => {
+  const { Content } = await render(entry);
+  return { entry, Content };
+}));
+---
+
+<section class="experience">
+  <h2>Experience</h2>
+  <div class="timeline">
+    {experience.map(({ entry, Content }) => (
+      <div class="timeline-item">
+        <div class="timeline-marker"></div>
+        <div class="timeline-content">
+          <div class="meta">
+            <span class="period">{entry.data.period}</span>
+            <span class="location">{entry.data.location}</span>
+          </div>
+          <div class="card glass">
+            <div class="header">
+              <h3>{entry.data.role}</h3>
+              <p class="company">{entry.data.company}</p>
+            </div>
+            <div class="mdx-content">
+              <Content />
+            </div>
+            {entry.data.tags && (
+              <div class="tags">
+                {entry.data.tags.map(tag => (
+                  <span class="tag">{tag}</span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .experience {
+    margin: 4rem 0;
+  }
+
+  h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--accent);
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--glass-border);
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 3rem;
+  }
+
+  .timeline-marker {
+    position: absolute;
+    left: -2rem;
+    top: 0.5rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: translateX(-50%);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--sub);
+    margin-bottom: 0.5rem;
+    font-family: var(--font-sans);
+  }
+
+  .card {
+    padding: 1.5rem;
+  }
+
+  .header h3 {
+    font-size: 1.25rem;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .company {
+    font-size: 1rem;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  .mdx-content {
+    font-size: 0.95rem;
+    color: var(--text);
+    opacity: 0.9;
+  }
+
+  .mdx-content :global(ul) {
+    padding-left: 1.25rem;
+    margin: 1rem 0;
+  }
+
+  .mdx-content :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    border-radius: 4px;
+    color: var(--sub);
+  }
+
+  @media (max-width: 600px) {
+    .meta {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+</style>
