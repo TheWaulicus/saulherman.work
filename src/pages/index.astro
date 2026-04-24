@@ -15,7 +15,7 @@ const featuredProjects = await getCollection('projects', ({ data }) => {
 featuredProjects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
-<BaseLayout title="Saul Herman | Product Engineer">
+<BaseLayout title="Saul Herman">
   <Hero />
   
   {featuredProjects.length > 0 && (
