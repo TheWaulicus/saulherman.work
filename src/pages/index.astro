@@ -18,8 +18,6 @@ featuredProjects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 <BaseLayout title="Saul Herman | Product Engineer">
   <Hero />
   
-  <ExperienceTimeline />
-
   {featuredProjects.length > 0 && (
     <section class="featured-projects">
       <h2>Featured Projects</h2>
@@ -36,6 +34,8 @@ featuredProjects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
       </div>
     </section>
   )}
+
+  <ExperienceTimeline />
 
   <BentoToolkit />
 
