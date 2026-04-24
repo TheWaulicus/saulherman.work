@@ -5,9 +5,14 @@ import ExperienceTimeline from '../components/ExperienceTimeline.astro';
 import BentoToolkit from '../components/BentoToolkit.astro';
 import FeatureCard from '../components/FeatureCard.astro';
 import Footer from '../components/Footer.astro';
-import { getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 
-const extractionLab = await getEntry('projects', 'extraction-lab');
+const featuredProjects = await getCollection('projects', ({ data }) => {
+  return data.featured === true;
+});
+
+// Sort projects by date descending
+featuredProjects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
 ---
 
 <BaseLayout title="Saul Herman | Product Engineer">
@@ -15,16 +20,20 @@ const extractionLab = await getEntry('projects', 'extraction-lab');
   
   <ExperienceTimeline />
 
-  {extractionLab && (
-    <section class="featured-project">
-      <h2>Featured Project</h2>
-      <FeatureCard
-        title={extractionLab.data.title}
-        description={extractionLab.data.description}
-        tags={extractionLab.data.tags}
-        type="product"
-        href={extractionLab.data.url}
-      />
+  {featuredProjects.length > 0 && (
+    <section class="featured-projects">
+      <h2>Featured Projects</h2>
+      <div class="projects-grid">
+        {featuredProjects.map(project => (
+          <FeatureCard
+            title={project.data.title}
+            description={project.data.description}
+            tags={project.data.tags}
+            type="product"
+            href={project.data.url}
+          />
+        ))}
+      </div>
     </section>
   )}
 
@@ -34,7 +43,7 @@ const extractionLab = await getEntry('projects', 'extraction-lab');
 </BaseLayout>
 
 <style>
-  .featured-project {
+  .featured-projects {
     margin: 4rem 0;
   }
 
@@ -43,5 +52,17 @@ const extractionLab = await getEntry('projects', 'extraction-lab');
     margin-bottom: 2rem;
     color: var(--accent);
     font-family: var(--font-serif);
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .projects-grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
