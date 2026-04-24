@@ -1,0 +1,22 @@
+[
+  {
+    "category": "Platforms",
+    "items": ["Jamf Pro", "Okta", "Omnissa", "Intune", "Google Workspace", "AWS"],
+    "size": "large"
+  },
+  {
+    "category": "Automation",
+    "items": ["Python", "Bash", "PowerShell", "Swift", "API Integration"],
+    "size": "medium"
+  },
+  {
+    "category": "Security & Compliance",
+    "items": ["CIS Benchmarks", "SOC2", "NIST", "Endpoint Security"],
+    "size": "small"
+  },
+  {
+    "category": "Domains",
+    "items": ["Endpoint Management", "Zero Trust", "Infrastructure as Code", "Fleet Scale"],
+    "size": "medium"
+  }
+]

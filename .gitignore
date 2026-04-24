@@ -168,3 +168,7 @@ dist
 
 # Git Worktrees
 .worktrees/
+
+# Astro
+.astro/
+dist/
