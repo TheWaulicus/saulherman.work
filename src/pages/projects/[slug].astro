@@ -1,0 +1,158 @@
+---
+import { getCollection, render } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Footer from '../../components/Footer.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map(project => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+}
+---
+
+<BaseLayout title={`${project.data.title} — Saul Herman`} description={project.data.description}>
+  <article class="project">
+    <a href="/#projects" class="back-link">&larr; Back to projects</a>
+
+    <header class="project-header">
+      <h1>{project.data.title}</h1>
+      <p class="description">{project.data.description}</p>
+      <div class="meta">
+        <time datetime={project.data.date.toISOString()}>{formatDate(project.data.date)}</time>
+        {project.data.tags && (
+          <div class="tags" role="list">
+            {project.data.tags.map(tag => (
+              <span class="tag" role="listitem">{tag}</span>
+            ))}
+          </div>
+        )}
+      </div>
+      <a href={project.data.url} class="btn" target="_blank" rel="noopener noreferrer">
+        Visit project
+        <span aria-hidden="true">&nearr;</span>
+      </a>
+    </header>
+
+    <div class="mdx-content">
+      <Content />
+    </div>
+  </article>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .project {
+    padding-top: 2rem;
+  }
+
+  .back-link {
+    display: inline-block;
+    font-size: 0.9rem;
+    color: var(--sub);
+    text-decoration: none;
+    margin-bottom: 2.5rem;
+    transition: color 0.2s ease;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .project-header h1 {
+    font-size: clamp(2rem, 6vw, 3rem);
+    line-height: 1.1;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+
+  .description {
+    font-size: 1.15rem;
+    color: var(--sub);
+    max-width: 600px;
+    margin-bottom: 1.5rem;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: var(--sub);
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
+    border-radius: 4px;
+    color: var(--sub);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    color: var(--accent);
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    transform: translateY(-2px);
+    background: var(--tag-bg);
+  }
+
+  .mdx-content {
+    margin-top: 3rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  .mdx-content :global(h3) {
+    font-size: 1.4rem;
+    color: var(--accent);
+    margin: 2rem 0 1rem;
+  }
+
+  .mdx-content :global(ul) {
+    padding-left: 1.25rem;
+  }
+
+  .mdx-content :global(li) {
+    margin-bottom: 0.75rem;
+  }
+
+  .mdx-content :global(strong) {
+    color: var(--text);
+  }
+</style>

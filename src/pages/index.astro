@@ -19,7 +19,7 @@ featuredProjects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
   <Hero />
   
   {featuredProjects.length > 0 && (
-    <section class="featured-projects">
+    <section class="featured-projects" id="projects">
       <h2>Featured Projects</h2>
       <div class="projects-grid">
         {featuredProjects.map(project => (
@@ -28,7 +28,7 @@ featuredProjects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
             description={project.data.description}
             tags={project.data.tags}
             type="product"
-            href={project.data.url}
+            href={`/projects/${project.id}`}
           />
         ))}
       </div>

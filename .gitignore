@@ -172,3 +172,6 @@ dist
 # Astro
 .astro/
 dist/
+
+# macOS
+.DS_Store
