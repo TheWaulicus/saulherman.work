@@ -1,0 +1,33 @@
+---
+title: "neara-IT Lifecycle Automation"
+description: "Identity lifecycle platform: automated onboarding, offboarding, access audit, and remediation across 15 SaaS services on AWS serverless."
+date: 2026-10-01
+url: "https://neara.com"
+tags: ["Python", "AWS Lambda", "DynamoDB", "Slack API", "Identity Lifecycle", "Textual TUI"]
+featured: true
+---
+
+neara-IT is the identity lifecycle platform I designed and built as IT Manager at Neara. One Python package drives four flows over a shared SaaS services layer: onboarding, offboarding, access audit, and remediation. The source is private; this page describes the architecture and the results.
+
+### The Four Flows
+
+- **Onboarding** provisions a new hire across 15 lifecycle service keys on day one, driven by an HR-approved start date.
+- **Offboarding** deactivates a leaver's accounts across the same service matrix, given one email address.
+- **Audit** reconciles every account in every service against the Google Workspace directory. It reports access that belongs to nobody currently employed, and answers "did offboarding actually work".
+- **Remediation** revokes what the audit found, one individually approved account at a time.
+
+### 15 Services, One Shared Layer
+
+The platform integrates Google Workspace, Slack, Microsoft Entra ID, GitHub, JetBrains, Atlassian (Confluence/Jira), Bitbucket, Zoom, HubSpot, Bitwarden, Fibery, Rollbar, ClickHouse, and ChartHop. One services module holds pure API actions per SaaS; the flow modules own all business logic. This separation made every later flow cheap to build.
+
+### Serverless Delivery
+
+18 AWS Lambda functions run the scheduled flows: EventBridge schedules detect hires and leavers from ChartHop, Slack holds the human approval step, and DynamoDB state machines carry durable per-service delivery state. An automated release pipeline pins each function to an ECR digest and rolls back per function on failure.
+
+### Self-Service IT
+
+Non-technical operators use a Textual TUI with per-flow screens and a setup diagnostics view. A Slack bot exposes /reset-password, /reset-mfa, /recover-bitwarden, and /reissue slash commands, each running the same tested flow functions as the CLI.
+
+### Safety by Design
+
+Every mutating flow is dry-run by default. Failures isolate per user and per service, so one bad token never stops a run. Re-runs are idempotent. Ambiguity refuses rather than guesses. 2,100+ mocked tests cover the CLI, the bot, the TUI, and the infrastructure.

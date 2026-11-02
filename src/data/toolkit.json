@@ -1,22 +1,27 @@
 [
   {
     "category": "Platforms",
-    "items": ["Jamf Pro", "Okta", "Omnissa", "Intune", "Google Workspace", "AWS"],
+    "items": ["Google Workspace", "Slack", "Microsoft Entra ID", "Atlassian", "GitHub", "1Password", "Okta", "Jamf Pro"],
     "size": "large"
   },
   {
-    "category": "Automation",
-    "items": ["Python", "Bash", "PowerShell", "Swift", "API Integration"],
+    "category": "Cloud & Infrastructure",
+    "items": ["AWS Lambda", "DynamoDB", "EventBridge", "SAM", "Terraform", "Cloudflare Workers"],
     "size": "medium"
   },
   {
-    "category": "Security & Compliance",
-    "items": ["CIS Benchmarks", "SOC2", "NIST", "Endpoint Security"],
-    "size": "small"
+    "category": "Automation & AI",
+    "items": ["Python", "Click", "Textual", "uv", "LiteLLM", "Agent Skills", "MCP"],
+    "size": "medium"
   },
   {
     "category": "Domains",
-    "items": ["Endpoint Management", "Zero Trust", "Infrastructure as Code", "Fleet Scale"],
-    "size": "medium"
+    "items": ["Identity Lifecycle", "Endpoint Management", "Zero Trust", "Infrastructure as Code", "Fleet Scale"],
+    "size": "small"
+  },
+  {
+    "category": "Security & Compliance",
+    "items": ["SOC2", "CIS Benchmarks", "NIST", "Endpoint Security", "ITIL"],
+    "size": "small"
   }
 ]

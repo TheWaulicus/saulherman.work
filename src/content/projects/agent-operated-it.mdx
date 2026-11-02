@@ -1,0 +1,30 @@
+---
+title: "Agent-Operated IT"
+description: "An AI-agent development method for IT operations: 14 reusable agent skills, MCP servers, and 1Password Environment secrets."
+date: 2026-11-01
+url: "https://saulherman.work"
+tags: ["AI Agents", "MCP", "1Password", "Automation", "IT Operations"]
+featured: false
+---
+
+I run IT operations as an AI-agent development workflow. Coding agents do the work; skills and structured secrets keep them safe and consistent. This page describes the method, not one tool.
+
+### 14 Reusable Agent Skills
+
+My dotfiles repository ships 14 agent skills that encode runbooks as executable instructions: device reconciliation against the HR directory, credential health checks, SaaS integration patterns, Slack message campaigns, and service credential registration. Each skill defines the safe procedure for one IT task, so any agent performs it the same way every time.
+
+### Structured Secrets
+
+All service credentials live in 1Password Environments, one variable per environment variable, mounted locally as FIFO `.env` files. Values are served on read and never touch disk. Lifecycle flows get isolated namespaces: onboarding secrets stay separate from offboarding secrets, so each flow reaches only the credentials it needs.
+
+### MCP Servers
+
+Model Context Protocol servers give agents typed access to the systems they operate: 1Password Environments for secrets, Slack for messaging, and more. The agents call tools through contracts, not through pasted tokens.
+
+### Scheduled Credential Health Checks
+
+A recurring doctor sweep verifies that stored service credentials still work before they cost a debugging session. The same checks run on demand inside the TUI.
+
+### Why It Matters
+
+The method turns tribal IT knowledge into reviewed, versioned, testable artifacts. An agent with the right skill does the task correctly on the first attempt, and a human reviews the result.
