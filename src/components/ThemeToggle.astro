@@ -1,60 +1,115 @@
 ---
 ---
-<button id="theme-toggle" aria-label="Toggle theme" class="glass">
-  <svg id="sun-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-  <svg id="moon-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+<button type="button" id="theme-toggle" class="glass">
+  <span class="to-light">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <span class="visually-hidden">Switch to light theme</span>
+  </span>
+  <span class="to-dark">
+    <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    <span class="visually-hidden">Switch to dark theme</span>
+  </span>
 </button>
 
 <script>
+  const meta = document.querySelector<HTMLMetaElement>('meta[name="color-scheme"]');
   const toggle = document.getElementById('theme-toggle');
-  const sunIcon = document.getElementById('sun-icon');
-  const moonIcon = document.getElementById('moon-icon');
+  const darkMql = window.matchMedia('(prefers-color-scheme: dark)');
+  const getSystemScheme = (): 'light' | 'dark' => (darkMql.matches ? 'dark' : 'light');
 
-  function updateIcons(theme) {
-    if (theme === 'light') {
-      sunIcon?.classList.add('hidden');
-      moonIcon?.classList.remove('hidden');
-    } else {
-      sunIcon?.classList.remove('hidden');
-      moonIcon?.classList.add('hidden');
+  function getStoredScheme(): 'light' | 'dark' | null {
+    try {
+      const value = localStorage.getItem('color-scheme');
+      return value === 'light' || value === 'dark' ? value : null;
+    } catch {
+      return null;
     }
   }
 
-  // Initial icon state
-  const currentTheme = document.documentElement.getAttribute('data-theme') || 'dark';
-  updateIcons(currentTheme);
-
   toggle?.addEventListener('click', () => {
-    const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', theme);
-    localStorage.setItem('theme', theme);
-    updateIcons(theme);
+    if (!meta) return;
+    const rendered =
+      meta.content === 'light' || meta.content === 'dark' ? meta.content : getSystemScheme();
+    const target = rendered === 'dark' ? 'light' : 'dark';
+    const nextStored = target === getSystemScheme() ? null : target;
+
+    try {
+      if (nextStored) {
+        localStorage.setItem('color-scheme', nextStored);
+      } else {
+        localStorage.removeItem('color-scheme');
+      }
+      localStorage.removeItem('theme');
+    } catch {}
+
+    meta.content = nextStored ?? 'light dark';
+  });
+
+  window.addEventListener('storage', (event) => {
+    if (!meta) return;
+    if (event.key === 'color-scheme' || event.key === null) {
+      meta.content = getStoredScheme() ?? 'light dark';
+    }
   });
 </script>
 
 <style>
   #theme-toggle {
-    position: fixed;
-    top: 2rem;
-    right: 2rem;
-    z-index: 1000;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    display: flex;
+    min-inline-size: 2.5rem;
+    min-block-size: 2.5rem;
+    padding: 0.5rem;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     color: var(--accent);
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    transition: background-color 0.3s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  @media (pointer: coarse) {
+    #theme-toggle {
+      min-inline-size: 2.75rem;
+      min-block-size: 2.75rem;
+    }
   }
 
   #theme-toggle:hover {
-    transform: translateY(-2px);
     border-color: var(--accent);
   }
 
-  .hidden {
+  @media (prefers-reduced-motion: no-preference) {
+    #theme-toggle:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  #theme-toggle .to-light,
+  #theme-toggle .to-dark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Light rendered by default: show the moon (switch to dark), hide the sun. */
+  #theme-toggle .to-light {
     display: none;
+  }
+
+  :global(:root:has(> head > meta[name="color-scheme"][content="dark"])) #theme-toggle .to-dark {
+    display: none;
+  }
+
+  :global(:root:has(> head > meta[name="color-scheme"][content="dark"])) #theme-toggle .to-light {
+    display: inline-flex;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :global(:root:not(:has(> head > meta[name="color-scheme"][content="light"]))) #theme-toggle .to-dark {
+      display: none;
+    }
+
+    :global(:root:not(:has(> head > meta[name="color-scheme"][content="light"]))) #theme-toggle .to-light {
+      display: inline-flex;
+    }
   }
 </style>
