@@ -1,0 +1,38 @@
+# Cloudflare Workers Static Assets custom headers.
+# The script-src hashes match the inline boot script and the speculation rules
+# in src/layouts/BaseLayout.astro. Recompute them when either block changes.
+
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), publickey-credentials-get=(), screen-wake-lock=(), usb=(), xr-spatial-tracking=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  Cross-Origin-Resource-Policy: same-origin
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-QH/e4xt7X+k1VflLkL6x4MIKY7fV5/FmL6xtUWtJwgM=' 'sha256-ghqj2ukSeBtO1wjPhP4nCN6JUMtrjBFR/2jrnr4U03k=' 'report-sample'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; base-uri 'none'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; require-trusted-types-for 'script'; upgrade-insecure-requests
+
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/saul_herman_resume.pdf
+  Content-Disposition: inline; filename="saul_herman_resume.pdf"
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+
+# The favicon styles its colour scheme with an internal <style> element.
+/favicon.svg
+  Cache-Control: public, max-age=86400
+  ! Content-Security-Policy
+  Content-Security-Policy: default-src 'none'; style-src 'sha256-CJ4OjX+TILIwkM4fYuc/SbBpBRBLN+5VTKLgXKs5Pxs='; frame-ancestors 'none'
+
+/favicon.ico
+  Cache-Control: public, max-age=86400
+
+/og-image.png
+  Cache-Control: public, max-age=86400
+
+/manifest.webmanifest
+  Cache-Control: public, max-age=86400

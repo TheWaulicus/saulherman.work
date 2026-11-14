@@ -2,16 +2,18 @@
 import toolkit from '../data/toolkit.json';
 ---
 
-<section class="toolkit">
-  <h2>Toolkit</h2>
+<section class="toolkit" id="toolkit" aria-labelledby="toolkit-heading">
+  <h2 id="toolkit-heading">Toolkit</h2>
   <div class="bento-grid">
     {toolkit.map(group => (
-      <div class="bento-item glass">
-        <h3>{group.category}</h3>
-        <div class="skill-list" role="list">
-          {group.items.map(item => (
-            <span class="skill-tag" role="listitem">{item}</span>
-          ))}
+      <div class="bento-item glass" data-size={group.size}>
+        <div class="bento-inner">
+          <h3>{group.category}</h3>
+          <ul class="skill-list" role="list">
+            {group.items.map(item => (
+              <li class="skill-tag">{item}</li>
+            ))}
+          </ul>
         </div>
       </div>
     ))}
@@ -21,6 +23,10 @@ import toolkit from '../data/toolkit.json';
 <style>
   .toolkit {
     margin: 4rem 0;
+    container-type: inline-size;
+    container-name: toolkit;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 240px;
   }
 
   h2 {
@@ -32,21 +38,26 @@ import toolkit from '../data/toolkit.json';
 
   .bento-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: 1.5rem;
   }
 
   .bento-item {
-    padding: 2rem;
+    container-type: inline-size;
+    container-name: bento-card;
+    padding: clamp(1.25rem, 3cqi, 2rem);
+  }
+
+  .bento-inner {
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
     height: 100%;
   }
 
-  .bento-item h3 {
+  .bento-inner h3 {
     font-size: 0.9rem;
     color: var(--muted);
-    margin-bottom: 1.5rem;
     font-family: var(--font-sans);
     font-weight: 600;
     text-transform: uppercase;
@@ -57,6 +68,9 @@ import toolkit from '../data/toolkit.json';
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   .skill-tag {
@@ -68,10 +82,36 @@ import toolkit from '../data/toolkit.json';
     border-radius: 6px;
   }
 
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
+  @container toolkit (min-width: 42em) {
     .bento-grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(6, 1fr);
+    }
+
+    .bento-item[data-size="large"] {
+      grid-column: span 6;
+    }
+
+    .bento-item[data-size="medium"],
+    .bento-item[data-size="small"] {
+      grid-column: span 3;
+    }
+  }
+
+  @container bento-card (min-width: 38em) {
+    .bento-inner {
+      flex-direction: row;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .bento-inner h3 {
+      flex-shrink: 0;
+      min-inline-size: 10rem;
+    }
+
+    .bento-inner .skill-list {
+      flex: 1;
     }
   }
 </style>

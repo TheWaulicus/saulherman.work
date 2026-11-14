@@ -4,7 +4,6 @@ import Hero from '../components/Hero.astro';
 import ExperienceTimeline from '../components/ExperienceTimeline.astro';
 import BentoToolkit from '../components/BentoToolkit.astro';
 import FeatureCard from '../components/FeatureCard.astro';
-import Footer from '../components/Footer.astro';
 import { getCollection } from 'astro:content';
 
 const featuredProjects = await getCollection('projects', ({ data }) => {
@@ -13,22 +12,55 @@ const featuredProjects = await getCollection('projects', ({ data }) => {
 
 // Sort projects by date descending
 featuredProjects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const siteURL = new URL('/', Astro.site).href;
+
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  '@id': `${siteURL}#person`,
+  name: 'Saul Herman',
+  url: siteURL,
+  jobTitle: 'IT Manager',
+  description:
+    'IT Manager and Platform Engineer building identity lifecycle automation and AI-agent-operated IT platforms.',
+  worksFor: { '@type': 'Organization', name: 'Neara', url: 'https://neara.com' },
+  alumniOf: { '@type': 'Organization', name: 'Atlassian', url: 'https://www.atlassian.com' },
+  address: { '@type': 'PostalAddress', addressLocality: 'Sydney', addressCountry: 'AU' },
+  email: 'mailto:saulmherman@icloud.com',
+  sameAs: ['https://github.com/thewaulicus', 'https://linkedin.com/in/bettercallsaui'],
+  knowsAbout: [
+    'Identity lifecycle automation',
+    'Endpoint management',
+    'Zero Trust',
+    'AWS serverless',
+    'AI agents',
+    'Model Context Protocol',
+  ],
+};
+
+const personJson = JSON.stringify(personJsonLd).replace(/</g, '\\u003c');
 ---
 
-<BaseLayout title="Saul Herman">
+<BaseLayout title="Saul Herman - IT Manager & Platform Engineer">
+  <Fragment slot="head">
+    <script type="application/ld+json" is:inline set:html={personJson} />
+  </Fragment>
+
   <Hero />
-  
+
   {featuredProjects.length > 0 && (
-    <section class="featured-projects" id="projects">
-      <h2>Featured Projects</h2>
+    <section class="featured-projects" id="projects" aria-labelledby="projects-heading">
+      <h2 id="projects-heading">Featured Projects</h2>
       <div class="projects-grid">
         {featuredProjects.map(project => (
           <FeatureCard
             title={project.data.title}
             description={project.data.description}
             tags={project.data.tags}
-            type="product"
-            href={`/projects/${project.id}`}
+            type={project.data.type}
+            href={`/projects/${project.id}/`}
+            slug={project.id}
           />
         ))}
       </div>
@@ -38,8 +70,6 @@ featuredProjects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
   <ExperienceTimeline />
 
   <BentoToolkit />
-
-  <Footer />
 </BaseLayout>
 
 <style>
@@ -60,7 +90,7 @@ featuredProjects.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
     gap: 1.5rem;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 48em) {
     .projects-grid {
       grid-template-columns: 1fr;
     }

@@ -2,40 +2,70 @@
 interface Props {
   title: string;
   description: string;
-  tags: string[];
-  type: 'product' | 'scale';
-  href?: string;
+  tags?: string[];
+  type?: 'product' | 'scale';
+  href: string;
+  slug?: string;
 }
 
-const { title, description, tags, type, href = "#" } = Astro.props;
+const { title, description, tags = [], type = 'product', href, slug } = Astro.props;
 ---
 
-<a href={href} class="feature-card glass" aria-label={`View ${title}`}>
-  <div class="card-content">
-    <div class="card-header">
-      <span class="type-badge">{type === 'product' ? 'Product' : 'Scale'}</span>
-      <h3>{title}</h3>
-    </div>
-    <p>{description}</p>
-    <div class="tags">
-      {tags.map(tag => <span class="tag">{tag}</span>)}
-    </div>
-  </div>
-</a>
+<article class="feature-card glass" data-vt-card={slug}>
+  <header class="card-header">
+    <span class="type-badge">{type === 'product' ? 'Product' : 'Scale'}</span>
+    <h3 data-vt-title={slug}>
+      <a href={href} class="card-link">{title}</a>
+    </h3>
+  </header>
+  <p>{description}</p>
+  {tags.length > 0 && (
+    <ul class="tags" role="list" aria-label="Technologies">
+      {tags.map(tag => <li class="tag">{tag}</li>)}
+    </ul>
+  )}
+</article>
 
 <style>
   .feature-card {
-    display: block;
-    text-decoration: none;
-    color: inherit;
+    position: relative;
+    display: flex;
+    flex-direction: column;
     padding: 1.5rem;
-    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.3s ease;
     height: 100%;
+    transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1), border-color 0.3s ease;
   }
 
-  .feature-card:hover {
-    transform: translateY(-4px);
+  .feature-card:has(.card-link:hover) {
     border-color: var(--accent);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .feature-card:has(.card-link:hover) {
+      transform: translateY(-4px);
+    }
+  }
+
+  .feature-card:has(.card-link:focus-visible) {
+    border-color: var(--accent);
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .card-link {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .card-link::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+
+  .card-link:focus-visible {
+    outline: none;
   }
 
   .type-badge {
@@ -54,6 +84,10 @@ const { title, description, tags, type, href = "#" } = Astro.props;
     color: var(--text);
   }
 
+  h3[data-vt-title] {
+    width: fit-content;
+  }
+
   p {
     color: var(--sub);
     font-size: 0.95rem;
@@ -65,7 +99,9 @@ const { title, description, tags, type, href = "#" } = Astro.props;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: auto;
+    margin: auto 0 0;
+    padding: 0;
+    list-style: none;
   }
 
   .tag {

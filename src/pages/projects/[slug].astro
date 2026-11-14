@@ -2,7 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Footer from '../../components/Footer.astro';
+import { formatMonthYear, toPlainDateString } from '../../utils/dates';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects');
@@ -19,39 +19,74 @@ interface Props {
 const { project } = Astro.props;
 const { Content } = await render(project);
 
-function formatDate(date: Date) {
-  return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-}
+const siteURL = new URL('/', Astro.site).href;
+const projectsURL = new URL('/#projects', Astro.site).href;
+const pageURL = new URL(`/projects/${project.id}/`, Astro.site).href;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Projects', item: projectsURL },
+      { '@type': 'ListItem', position: 2, name: project.data.title, item: pageURL },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    '@id': `${pageURL}#work`,
+    name: project.data.title,
+    description: project.data.description,
+    url: pageURL,
+    dateCreated: toPlainDateString(project.data.date),
+    keywords: project.data.tags?.join(', '),
+    ...(project.data.url ? { sameAs: project.data.url } : {}),
+    author: { '@type': 'Person', '@id': `${siteURL}#person`, name: 'Saul Herman', url: siteURL },
+  },
+];
+
+const jsonLdString = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 ---
 
-<BaseLayout title={`${project.data.title} — Saul Herman`} description={project.data.description}>
-  <article class="project">
-    <a href="/#projects" class="back-link">&larr; Back to projects</a>
+<BaseLayout title={`${project.data.title} - Saul Herman`} description={project.data.description}>
+  <Fragment slot="head">
+    <script type="application/ld+json" is:inline set:html={jsonLdString} />
+  </Fragment>
 
-    <header class="project-header">
-      <h1>{project.data.title}</h1>
+  <article class="project">
+    <nav class="breadcrumb" aria-label="Breadcrumbs">
+      <ol role="list">
+        <li><a href="/#projects">Projects</a></li>
+        <li><a href={`/projects/${project.id}/`} aria-current="page">{project.data.title}</a></li>
+      </ol>
+    </nav>
+
+    <header class="project-header" data-vt-card={project.id}>
+      <h1 data-vt-title={project.id}>{project.data.title}</h1>
       <p class="description">{project.data.description}</p>
       <div class="meta">
-        <time datetime={project.data.date.toISOString()}>{formatDate(project.data.date)}</time>
+        <time datetime={toPlainDateString(project.data.date)}>{formatMonthYear(project.data.date, 'long')}</time>
         {project.data.tags && (
-          <div class="tags" role="list">
+          <ul class="tags" role="list" aria-label="Technologies">
             {project.data.tags.map(tag => (
-              <span class="tag" role="listitem">{tag}</span>
+              <li class="tag">{tag}</li>
             ))}
-          </div>
+          </ul>
         )}
       </div>
-      <a href={project.data.url} class="btn" target="_blank" rel="noopener noreferrer">
-        Visit project
-        <span aria-hidden="true">&nearr;</span>
-      </a>
+      {project.data.url && (
+        <a href={project.data.url} class="btn" target="_blank" rel="noopener noreferrer">
+          {project.data.urlLabel ?? 'Visit project'}
+          <span aria-hidden="true">&nearr;</span>
+        </a>
+      )}
     </header>
 
     <div class="mdx-content">
       <Content />
     </div>
   </article>
-  <Footer />
 </BaseLayout>
 
 <style>
@@ -59,21 +94,69 @@ function formatDate(date: Date) {
     padding-top: 2rem;
   }
 
-  .back-link {
-    display: inline-block;
-    font-size: 0.9rem;
-    color: var(--sub);
-    text-decoration: none;
+  .breadcrumb {
     margin-bottom: 2.5rem;
+    font-size: 0.9rem;
+  }
+
+  .breadcrumb > ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .breadcrumb > ol > li {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .breadcrumb > ol > li + li::before {
+    content: "/";
+    content: "/" / "";
+    margin-inline-end: 0.5rem;
+    color: var(--muted);
+  }
+
+  .breadcrumb a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 1.5rem;
+    color: var(--sub);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, currentColor 40%, transparent);
+    text-underline-offset: 0.2em;
     transition: color 0.2s ease;
   }
 
-  .back-link:hover {
+  .breadcrumb a:hover {
     color: var(--accent);
+    text-decoration-color: currentColor;
+  }
+
+  .breadcrumb a[aria-current="page"] {
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  @media (pointer: coarse) {
+    .breadcrumb a {
+      min-block-size: 2.75rem;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .breadcrumb a[aria-current="page"] {
+      text-decoration: underline;
+    }
   }
 
   .project-header h1 {
-    font-size: clamp(2rem, 6vw, 3rem);
+    font-size: clamp(1.75rem, 1.2rem + 3vw, 3rem);
     line-height: 1.1;
     margin-bottom: 1rem;
     color: var(--text);
@@ -82,7 +165,7 @@ function formatDate(date: Date) {
   .description {
     font-size: 1.15rem;
     color: var(--sub);
-    max-width: 600px;
+    max-inline-size: 65ch;
     margin-bottom: 1.5rem;
   }
 
@@ -100,6 +183,9 @@ function formatDate(date: Date) {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   .tag {
@@ -115,6 +201,7 @@ function formatDate(date: Date) {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    min-block-size: 2.25rem;
     font-size: 0.9rem;
     font-weight: 500;
     letter-spacing: 0.02em;
@@ -123,12 +210,23 @@ function formatDate(date: Date) {
     border: 1px solid var(--accent);
     border-radius: 6px;
     color: var(--accent);
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
   }
 
   .btn:hover {
-    transform: translateY(-2px);
     background: var(--tag-bg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (pointer: coarse) {
+    .btn {
+      min-block-size: 2.75rem;
+    }
   }
 
   .mdx-content {
@@ -136,6 +234,12 @@ function formatDate(date: Date) {
     font-size: 1.05rem;
     line-height: 1.7;
     color: var(--text);
+  }
+
+  .mdx-content :global(h2) {
+    font-size: 1.75rem;
+    color: var(--accent);
+    margin: 2.5rem 0 1rem;
   }
 
   .mdx-content :global(h3) {

@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Page not found - Saul Herman" description="The page you requested does not exist.">
+  <section class="not-found" aria-labelledby="not-found-title">
+    <h1 id="not-found-title">Page not found</h1>
+    <p>The page you requested does not exist or has moved.</p>
+    <a href="/" class="btn">Back to home</a>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding: 4rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
+
+  h1 {
+    font-size: var(--title-size);
+    line-height: 1.1;
+    color: var(--text);
+  }
+
+  p {
+    color: var(--sub);
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    padding: 0.6rem 1.2rem;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    color: var(--accent);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn:hover {
+    background: var(--tag-bg);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+  }
+</style>
