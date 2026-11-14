@@ -1,5 +1,6 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
 
 const experience = defineCollection({
   loader: glob({ pattern: "**/*.mdx", base: "./src/content/experience" }),
@@ -21,7 +22,6 @@ const projects = defineCollection({
     description: z.string(),
     date: z.coerce.date(),
     url: z
-      .string()
       .url()
       .refine(
         (val) => {

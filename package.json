@@ -6,6 +6,7 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"dev": "astro dev",
+		"test": "node --test tests/*.test.mjs",
 		"deploy": "wrangler deploy",
 		"start": "wrangler dev"
 	},

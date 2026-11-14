@@ -43,7 +43,7 @@ const read = (path) => readFileSync(join(dist, path), 'utf8');
 const rel = (path) => relative(dist, path);
 
 const allHtml = hasDist ? walk(dist).filter((f) => f.endsWith('.html')) : [];
-const layoutPages = ['index.html', ...SLUGS.map((s) => `projects/${s}/index.html`)];
+const layoutPages = ['index.html', '404.html', ...SLUGS.map((s) => `projects/${s}/index.html`)];
 
 function parseAttrs(tag) {
   const attrs = {};
@@ -134,15 +134,18 @@ describe('built site output', { skip }, () => {
 
         test('has the landmark structure', () => {
           const h = html();
-          for (const needle of [
-            '<header class="site-header">',
-            '<nav class="site-nav" aria-label="Primary">',
-            '<main id="main-content"',
-            '<footer class="footer">',
-            '<nav class="footer-links" aria-label="Social profiles">',
-          ]) {
-            assert.ok(h.includes(needle), `missing ${needle}`);
+          const landmarkChecks = [
+            ['<header class="site-header">', /<header\b[^>]*class="[^"]*\bsite-header\b/i],
+            ['<nav class="site-nav" aria-label="Primary">', /<nav\b[^>]*class="[^"]*\bsite-nav\b[^>]*aria-label="Primary"/i],
+            ['<main id="main-content"', /<main\b[^>]*id="main-content"/i],
+            ['<footer class="footer">', /<footer\b[^>]*class="[^"]*\bfooter\b/i],
+            ['<nav class="footer-links" aria-label="Social profiles">', /<nav\b[^>]*class="[^"]*\bfooter-links\b[^>]*aria-label="Social profiles"/i],
+          ];
+          for (const [label, pattern] of landmarkChecks) {
+            assert.match(h, pattern, `missing ${label}`);
           }
+          const mainCount = (h.match(/<main\b/gi) ?? []).length;
+          assert.equal(mainCount, 1, `expected 1 <main>, found ${mainCount}`);
         });
       });
     }
