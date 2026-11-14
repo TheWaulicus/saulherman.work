@@ -1,5 +1,7 @@
 ---
-const currentYear = new Date().getFullYear();
+import { getCurrentYearSydney } from '../utils/dates';
+
+const currentYear = getCurrentYearSydney();
 ---
 
 <footer class="footer">
@@ -7,7 +9,7 @@ const currentYear = new Date().getFullYear();
     <div class="copyright">
       &copy; {currentYear} Saul Herman
     </div>
-    <nav class="footer-links">
+    <nav class="footer-links" aria-label="Social profiles">
       <a href="https://github.com/thewaulicus" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a href="https://linkedin.com/in/bettercallsaui" target="_blank" rel="noopener noreferrer">LinkedIn</a>
     </nav>
@@ -36,6 +38,9 @@ const currentYear = new Date().getFullYear();
   }
 
   .footer-links a {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 1.5rem;
     color: var(--muted);
     text-decoration: none;
     transition: color 0.2s ease;
@@ -48,11 +53,21 @@ const currentYear = new Date().getFullYear();
     color: var(--accent);
   }
 
-  @media (max-width: 600px) {
+  @media (pointer: coarse) {
+    .footer-links a {
+      min-block-size: 2.75rem;
+    }
+  }
+
+  @media (max-width: 37.5em) {
     .footer-content {
       flex-direction: column;
       gap: 1.5rem;
       text-align: center;
+    }
+
+    .footer-links {
+      justify-content: center;
     }
   }
 </style>

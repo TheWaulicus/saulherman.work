@@ -1,9 +1,9 @@
 ---
 ---
 
-<header class="hero">
+<section class="hero" aria-labelledby="hero-title">
   <div class="intro">
-    <h1>Saul Herman</h1>
+    <h1 id="hero-title">Saul Herman</h1>
     <p class="subtitle">IT Manager & Platform Engineer</p>
     <p class="description">
       IT Manager at Neara, building identity lifecycle automation and AI-agent-operated IT platforms.
@@ -13,9 +13,60 @@
 
   <div class="hero-links">
     <a href="mailto:saulmherman@icloud.com" class="btn primary">Get in touch</a>
+    <div class="copy-email-wrap">
+      <span id="contact-email" class="visually-hidden">saulmherman@icloud.com</span>
+      <button type="button" class="btn copy-btn" command="--copy" commandfor="contact-email">
+        Copy email
+      </button>
+      <span class="copy-status" role="status" aria-live="polite"></span>
+    </div>
     <a href="/saul_herman_resume.pdf" class="btn primary" download>Resume PDF</a>
   </div>
-</header>
+</section>
+
+<script>
+  const EMAIL = 'saulmherman@icloud.com';
+  const target = document.getElementById('contact-email');
+  const status = document.querySelector<HTMLElement>('.copy-email-wrap .copy-status');
+  let lastMessage = '';
+  let clearTimer: ReturnType<typeof setTimeout> | undefined;
+
+  function report(ok: boolean) {
+    if (!status) return;
+    clearTimeout(clearTimer);
+    let message = ok ? 'Copied' : 'Copy failed';
+    // VoiceOver skips a message identical to the previous one, so make repeats differ.
+    if (message === lastMessage) message += '\u00A0';
+    lastMessage = message;
+    status.textContent = '';
+    requestAnimationFrame(() => {
+      status.textContent = message;
+    });
+    clearTimer = setTimeout(() => {
+      status.textContent = '';
+    }, 2000);
+  }
+
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      report(true);
+    } catch {
+      report(false);
+    }
+  }
+
+  target?.addEventListener('command', (event) => {
+    if ((event as Event & { command?: string }).command === '--copy') copyEmail();
+  });
+
+  if (!('CommandEvent' in window)) {
+    document.addEventListener('click', (event) => {
+      const button = (event.target as Element | null)?.closest('button[command="--copy"]');
+      if (button?.getAttribute('commandfor') === 'contact-email') copyEmail();
+    });
+  }
+</script>
 
 <style>
   .hero {
@@ -41,7 +92,7 @@
   }
 
   .description {
-    max-width: 600px;
+    max-inline-size: 65ch;
     font-size: 1.1rem;
     color: var(--sub);
     line-height: 1.6;
@@ -55,29 +106,59 @@
     margin-top: 1rem;
   }
 
+  .copy-email-wrap {
+    position: relative;
+    display: inline-flex;
+  }
+
+  /* Positioned out of flow so the message never shifts the neighbouring buttons. */
+  .copy-status {
+    position: absolute;
+    inset-block-start: 100%;
+    inset-inline-start: 0;
+    margin-block-start: 0.35rem;
+    font-size: 0.85rem;
+    color: var(--sub);
+    white-space: nowrap;
+  }
+
   .btn {
+    font: inherit;
     font-size: 0.9rem;
     font-weight: 500;
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
     letter-spacing: 0.02em;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    min-block-size: 2.25rem;
     padding: 0.6rem 1.2rem;
     border: 1px solid var(--accent);
     border-radius: 6px;
     background: transparent;
     color: var(--accent);
+    cursor: pointer;
   }
 
   .btn:hover {
-    background: rgba(232, 213, 163, 0.05);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 20px rgba(232, 213, 163, 0.1);
+    background: var(--tag-bg);
+    box-shadow: 0 4px 20px color-mix(in oklab, var(--accent) 10%, transparent);
   }
 
-  @media (max-width: 768px) {
+  @media (prefers-reduced-motion: no-preference) {
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  @media (pointer: coarse) {
+    .btn {
+      min-block-size: 2.75rem;
+    }
+  }
+
+  @media (max-width: 48em) {
     .hero {
       padding: 4rem 0 2rem;
     }

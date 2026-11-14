@@ -1,5 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
+import { formatMonthYear, toYearMonthString } from '../utils/dates';
 
 const experienceEntries = await getCollection('experience');
 experienceEntries.sort((a, b) => b.data.startDate.getTime() - a.data.startDate.getTime());
@@ -8,25 +9,21 @@ const experience = await Promise.all(experienceEntries.map(async (entry) => {
   const { Content } = await render(entry);
   return { entry, Content };
 }));
-
-function formatDate(date: Date) {
-  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-}
 ---
 
-<section class="experience">
-  <h2>Experience</h2>
-  <div class="timeline">
-    {experience.map(({ entry, Content }) => (
-      <div class="timeline-item">
-        <div class="timeline-marker"></div>
+<section class="experience" id="experience" aria-labelledby="experience-heading">
+  <h2 id="experience-heading">Experience</h2>
+  <ol class="timeline" role="list">
+    {experience.map(({ entry, Content }, index) => (
+      <li class="timeline-item">
+        <div class="timeline-marker" aria-hidden="true"></div>
         <div class="timeline-content">
           <div class="meta">
             <span class="period">
-              <time datetime={entry.data.startDate.toISOString()}>{formatDate(entry.data.startDate)}</time>
+              <time datetime={toYearMonthString(entry.data.startDate)}>{formatMonthYear(entry.data.startDate)}</time>
               {' – '}
               {entry.data.endDate ? (
-                <time datetime={entry.data.endDate.toISOString()}>{formatDate(entry.data.endDate)}</time>
+                <time datetime={toYearMonthString(entry.data.endDate)}>{formatMonthYear(entry.data.endDate)}</time>
               ) : (
                 'Present'
               )}
@@ -38,21 +35,33 @@ function formatDate(date: Date) {
               <h3>{entry.data.role}</h3>
               <p class="company">{entry.data.company}</p>
             </div>
-            <div class="mdx-content">
-              <Content />
-            </div>
-            {entry.data.tags && (
-              <div class="tags" role="list">
-                {entry.data.tags.map(tag => (
-                  <span class="tag" role="listitem">{tag}</span>
-                ))}
+            {index < 2 ? (
+              <div class="mdx-content">
+                <Content />
               </div>
+            ) : (
+              <details class="role-details">
+                <summary>
+                  Highlights &amp; responsibilities
+                  <span class="visually-hidden">: {entry.data.role}, {entry.data.company}</span>
+                </summary>
+                <div class="mdx-content">
+                  <Content />
+                </div>
+              </details>
+            )}
+            {entry.data.tags && (
+              <ul class="tags" role="list">
+                {entry.data.tags.map(tag => (
+                  <li class="tag">{tag}</li>
+                ))}
+              </ul>
             )}
           </div>
         </div>
-      </div>
+      </li>
     ))}
-  </div>
+  </ol>
 </section>
 
 <style>
@@ -68,6 +77,8 @@ function formatDate(date: Date) {
 
   .timeline {
     position: relative;
+    list-style: none;
+    margin: 0;
     padding-left: 2rem;
   }
 
@@ -84,6 +95,16 @@ function formatDate(date: Date) {
   .timeline-item {
     position: relative;
     margin-bottom: 3rem;
+  }
+
+  /*
+   * Below-the-fold roles skip rendering until they near the viewport.
+   * content-visibility applies paint containment, so it goes on the content
+   * wrapper: on the <li> it would clip the marker, which sits outside the box.
+   */
+  .timeline-item:nth-child(n+3) > .timeline-content {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 260px;
   }
 
   .timeline-marker {
@@ -126,8 +147,7 @@ function formatDate(date: Date) {
 
   .mdx-content {
     font-size: 0.95rem;
-    color: var(--text);
-    opacity: 0.9;
+    color: color-mix(in oklab, var(--text) 92%, var(--bg));
   }
 
   .mdx-content :global(ul) {
@@ -139,11 +159,82 @@ function formatDate(date: Date) {
     margin-bottom: 0.5rem;
   }
 
+  .role-details summary {
+    list-style: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5ch;
+    min-block-size: 1.5rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--sub);
+    border-radius: 4px;
+    transition: color 0.2s ease;
+  }
+
+  .role-details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .role-details summary::before {
+    content: "";
+    inline-size: 0.75em;
+    block-size: 0.75em;
+    flex-shrink: 0;
+    background-color: currentColor;
+    clip-path: polygon(10% 25%, 90% 25%, 50% 80%);
+    rotate: -90deg;
+  }
+
+  .role-details summary:dir(rtl)::before {
+    rotate: 90deg;
+  }
+
+  .role-details[open] > summary::before {
+    rotate: 0deg;
+  }
+
+  .role-details summary:hover,
+  .role-details[open] > summary {
+    color: var(--text);
+  }
+
+  .role-details summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .role-details::details-content {
+    interpolate-size: allow-keywords;
+    overflow: clip;
+    contain: layout;
+  }
+
+  .role-details:not([open])::details-content {
+    block-size: 0;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .role-details summary::before {
+      transition: rotate 0.2s ease;
+    }
+
+    .role-details::details-content {
+      transition: block-size, content-visibility, display;
+      transition-duration: 0.3s;
+      transition-timing-function: ease-in-out;
+      transition-behavior: allow-discrete;
+    }
+  }
+
   .tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
-    margin-top: 1.5rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+    list-style: none;
   }
 
   .tag {
@@ -155,7 +246,20 @@ function formatDate(date: Date) {
     color: var(--sub);
   }
 
-  @media (max-width: 600px) {
+  @media (pointer: coarse) {
+    .role-details summary {
+      min-block-size: 2.75rem;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .role-details summary::before {
+      forced-color-adjust: none;
+      background-color: CanvasText;
+    }
+  }
+
+  @media (max-width: 37.5em) {
     .meta {
       flex-direction: column;
       gap: 0.25rem;

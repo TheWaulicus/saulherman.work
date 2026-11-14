@@ -20,7 +20,22 @@ const projects = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
-    url: z.string().url(),
+    url: z
+      .string()
+      .url()
+      .refine(
+        (val) => {
+          try {
+            return new URL(val).protocol === 'https:';
+          } catch {
+            return false;
+          }
+        },
+        { message: 'Project URL must use the https: protocol.' },
+      )
+      .optional(),
+    urlLabel: z.string().optional(),
+    type: z.enum(['product', 'scale']).default('product'),
     tags: z.array(z.string()).optional(),
     featured: z.boolean().default(false),
   }),
