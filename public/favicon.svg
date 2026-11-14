@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Saul Herman">
+  <style>
+    .bg { fill: #0a0a0a; }
+    .fg { fill: #e8d5a3; }
+    @media (prefers-color-scheme: light) {
+      .bg { fill: #fcfcfc; }
+      .fg { fill: #745d26; }
+    }
+  </style>
+  <rect class="bg" width="64" height="64" rx="14"/>
+  <path class="fg" d="M28.6 21.9c-1.2-2.6-3.6-4-6.7-4-3.6 0-6.1 1.9-6.1 4.7 0 2.5 1.7 3.9 5.6 4.9l2.7.7c5.4 1.4 7.9 3.9 7.9 7.9 0 5-4.1 8.2-10.3 8.2-5.2 0-8.9-2.4-10.1-6.4l3.7-1.4c.9 2.7 3.3 4.2 6.5 4.2 3.7 0 6.2-1.8 6.2-4.5 0-2.3-1.6-3.6-5.4-4.6l-2.8-.7c-5.1-1.3-7.6-3.8-7.6-7.7 0-4.6 4-7.8 9.6-7.8 4.6 0 8 2 9.8 5.4zM37 14.6h4.1v12.9h12.4V14.6h4.1v31.1h-4.1V31.3H41.1v14.4H37z"/>
+</svg>
