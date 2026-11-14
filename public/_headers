@@ -28,5 +28,11 @@
   ! Content-Security-Policy
   Content-Security-Policy: default-src 'none'; style-src 'sha256-CJ4OjX+TILIwkM4fYuc/SbBpBRBLN+5VTKLgXKs5Pxs='; frame-ancestors 'none'
 
+/favicon.ico
+  Cache-Control: public, max-age=86400
+
+/og-image.png
+  Cache-Control: public, max-age=86400
+
 /manifest.webmanifest
   Cache-Control: public, max-age=86400

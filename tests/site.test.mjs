@@ -82,7 +82,9 @@ describe('built site output', { skip }, () => {
       '404.html',
       'sitemap-index.xml',
       'robots.txt',
+      'favicon.ico',
       'favicon.svg',
+      'og-image.png',
       'manifest.webmanifest',
       '_headers',
       ...SLUGS.map((s) => `projects/${s}/index.html`),
@@ -114,9 +116,12 @@ describe('built site output', { skip }, () => {
       describe(`dist/${page}`, () => {
         const html = () => read(page);
 
-        test('declares color-scheme and text-scale meta', () => {
-          assert.ok(html().includes('<meta name="color-scheme" content="light dark">'));
-          assert.ok(html().includes('<meta name="text-scale" content="scale">'));
+        test('declares color-scheme, text-scale, and social image meta', () => {
+          const h = html();
+          assert.ok(h.includes('<meta name="color-scheme" content="light dark">'));
+          assert.ok(h.includes('<meta name="text-scale" content="scale">'));
+          assert.ok(h.includes('<meta property="og:image" content="https://saulherman.work/og-image.png">'));
+          assert.ok(h.includes('<meta name="twitter:card" content="summary_large_image">'));
         });
 
         test('uses self-hosted fonts only', () => {
